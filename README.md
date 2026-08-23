@@ -1,75 +1,60 @@
-# Climate-change-impedes-progress-toward-the-SDG-target-for-reducing-child-mortality
-## Overview
+# Tanzania temperature–child mortality projection demo
 
-This repository contains the code and data used for the analysis of temperature-related under-5 and neonatal mortality across multiple regions. 
+This folder contains a fully synthetic demonstration of the temperature–under-five mortality workflow used in the manuscript. It contains no real individual mortality records and no restricted INDEPTH data.
 
----
+## Requirements
 
-## Model Construction
+- R 4.4 or later
+- R packages: `dlnm` and `ggplot2`
 
-The first-stage model uses a **monthly aggregation function** adapted from the method proposed by:
+Install the packages once if needed:
 
-Basagaña, X. & Ballester, J. (2024). *Unbiased temperature-related mortality estimates using weekly and monthly health data: a new method for environmental epidemiology and climate impact studies*. The Lancet Planetary Health, 8, e766–e777.
+```r
+install.packages(c("dlnm", "ggplot2"))
+```
 
-* The implementation of the monthly aggregation function is based on publicly available code.
-* The original code can be accessed via GitHub (see referenced publication for repository details).
+## Running the demo
 
----
+1. Unzip the demo.
+2. In RStudio, set the working directory to the extracted `tanzania_temperature_mortality_demo` folder.
+3. Run the five scripts in numerical order:
 
-## Code and Data Structure
+```r
+source("01_mortality_data_preparation.R")
+source("02_exposure_data_preparation.R")
+source("03_exposure_response_model.R")
+source("04_future_climate_population_preparation.R")
+source("05_future_mortality_projection.R")
+```
 
-* Each analysis script (e.g., `Fig1`) corresponds to a specific figure in the manuscript.
-* For each script:
+Each script uses `project_path <- "."`; no computer-specific absolute path is required.
 
-  * The **full model objects and processed datasets** are stored in corresponding `.RData` files.
-  * These files ensure reproducibility of results without re-running the entire pipeline.
+## Workflow
 
----
+1. `01_mortality_data_preparation.R` creates synthetic 1990–2018 death records with artificial mid-month date heaping, monthly mortality counts, historical national U5MR, births and population inputs.
+2. `02_exposure_data_preparation.R` creates historical daily temperature and relative-humidity exposures.
+3. `03_exposure_response_model.R` fits the monthly aggregate DLNM and estimates a significant U-shaped cumulative temperature–mortality curve.
+4. `04_future_climate_population_preparation.R` creates synthetic daily temperatures, population and births for four SSP-style scenarios from 2020 to 2100.
+5. `05_future_mortality_projection.R` follows the manuscript sequence:
+   - estimates historical heat- and cold-related mortality from daily attributable fractions;
+   - obtains historical temperature-unrelated U5MR as the residual;
+   - extends the 1990–2018 annual reduction in temperature-unrelated U5MR through 2100;
+   - calculates future daily attributable deaths as `(1 - 1 / RR) × daily deaths`;
+   - combines temperature-unrelated, heat-related and cold-related mortality.
 
-## Data Availability
+The future projection follows the daily attributable-number framework illustrated in the EDE18-0469 tutorial by Vicedo-Cabrera, Sera and Gasparrini, while retaining the mortality-component sequence described in the manuscript.
 
-All datasets used in this study are publicly available from the following sources:
+## Main outputs
 
-### Historical Data
+Generated data are written to `data_raw/` and `data_processed/`. Results and `ggplot2` figures are written to `outputs/`.
 
-* **Meteorological Data**
-  https://cds.climate.copernicus.eu/datasets/derived-near-surface-meteorological-variables?tab=overview
+- `outputs/model_diagnostics.csv`: MMT, Wald test and heat/cold RR diagnostics.
+- `outputs/tanzania_historical_mortality_decomposition.csv`: historical heat, cold and temperature-unrelated U5MR.
+- `outputs/temperature_unrelated_arr_summary.csv`: 1990–2018 annual reduction estimate.
+- `outputs/tanzania_future_u5mr_projection.csv`: annual projections by SSP and adaptation level.
+- `outputs/tanzania_projection_summary_2090.csv`: 2090 summary.
+- `outputs/future_u5mr_projections.png`: projected U5MR pathways.
 
-* **Mortality Data (INDEPTH Network)**
-  https://www.indepth-ishare.org/index.php/catalog/central
+## Scope
 
-* **Population Data**
-  https://zenodo.org/records/10088105
-
-* **Birth Rate Data (World Bank)**
-  https://data.worldbank.org/indicator/SP.DYN.CBRT.IN
-
----
-
-### Future Projections
-
-* **Climate Model Data (ISIMIP)**
-  https://data.isimip.org/search/
-
-* **Population Projections**
-  https://figshare.com/articles/dataset/Projecting_1_km-grid_population_distributions_from_2020_to_2100_globally_under_shared_socioeconomic_pathways/19608594/2
-
-* **Birth Rate Projections (IIASA-WIC)**
-  https://dataexplorer.wittgensteincentre.org
-
----
-
-## Reproducibility
-
-* All analyses can be reproduced using the provided scripts and `.RData` files.
-* External data sources are openly accessible and can be re-downloaded if needed.
-
-
----
-
-## Notes
-
-* Ensure all required R packages are installed (e.g., `mixmeta`, `dlnm`, `dplyr`, `ggplot2`).
-* File paths in scripts may need to be adjusted to match local directory structures.
-
----
+All temperatures, deaths, populations, births and mortality rates are simulated for code demonstration. The demo provides point estimates and does not reproduce the manuscript's full multi-country, multi-GCM or Monte Carlo uncertainty analysis.
