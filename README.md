@@ -15,7 +15,6 @@ This repository supports analyses of temperature-related under-five mortality (U
 | `SupplementaryTables.RData` | Data for Supplementary Tables S1-S16 |
 | `Source Data.zip` | Source-data workbooks for the main figures, supplementary figures and supplementary tables |
 | `demo.zip` | A five-script workflow using simulated Tanzania data |
-| `FigS8.pdf`, `FigS8.png` | Figure S8 in vector PDF and 600-dpi PNG formats |
 | `MANIFEST_SHA256.txt` | File checksums |
 
 After extracting `Source Data.zip`, open `SourceData_MainFigures.xlsx` or `SourceData_Supplementary.xlsx`. Worksheet names identify the corresponding figure or table. Read the column headings and notes for units and definitions.
